@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{_layout}">
+
+<head>
+    <title>Mis Tareas</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <h1 class="mb-4">Lista de Tareas</h1>
+
+        <a th:href="@{/tareas/nueva}" class="btn btn-primary mb-3">Crear Nueva Tarea</a>
+
+        <div th:if="${#lists.isEmpty(tareas)}" class="alert alert-info">
+            No hay tareas para mostrar. ¡Crea una nueva!
+        </div>
+
+        <table class="table table-striped table-hover" th:if="${!#lists.isEmpty(tareas)}">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Fecha de Creación</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tarea : ${tareas}">
+                    <td th:text="${tarea.id}"></td>
+                    <td th:text="${tarea.titulo}"></td>
+                    <td th:text="${tarea.descripcion}"></td>
+                    <td th:text="${#temporals.format(tarea.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td>
+                        <span th:if="${tarea.completada}" class="badge bg-success">Completada</span>
+                        <span th:unless="${tarea.completada}" class="badge bg-warning text-dark">Pendiente</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/tareas/editar/{id}(id=${tarea.id})}" class="btn btn-sm btn-info">Editar</a>
+                        <a th:href="@{/tareas/eliminar/{id}(id=${tarea.id})}" class="btn btn-sm btn-danger"
+                            onclick="return confirm('¿Estás seguro de que deseas eliminar esta tarea?');"
+                            sec:authorize="hasRole('ADMIN')">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
